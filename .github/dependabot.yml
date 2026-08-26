@@ -1,0 +1,29 @@
+version: 2
+updates:
+  # Actions are pinned to a commit SHA, so nothing moves unless Dependabot
+  # proposes it and CI agrees.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        patterns: ["*"]
+
+  # Both requirements files live at the root, so one pip entry covers the
+  # runtime and the tooling.
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: deps
+    groups:
+      # One PR for the toolchain, one per runtime dependency: a lint pin
+      # bumping is not worth the same review as the metrics library the
+      # whole collector sits on.
+      dev-tooling:
+        patterns: ["ruff", "pytest*", "coverage", "bandit", "pip-audit"]
