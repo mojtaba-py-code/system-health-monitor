@@ -1,0 +1,44 @@
+# Optional declarative logging config (dictConfig format).
+# The application configures logging programmatically from settings.yaml by
+# default; this file documents an equivalent declarative setup.
+
+version: 1
+disable_existing_loggers: false
+
+formatters:
+  standard:
+    format: "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: standard
+    stream: ext://sys.stdout
+  monitoring:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: logs/monitoring.log
+    maxBytes: 5242880
+    backupCount: 5
+    encoding: utf-8
+  errors:
+    class: logging.handlers.RotatingFileHandler
+    level: WARNING
+    formatter: standard
+    filename: logs/errors.log
+    maxBytes: 5242880
+    backupCount: 5
+    encoding: utf-8
+
+loggers:
+  shm:
+    level: DEBUG
+    handlers: [console, monitoring, errors]
+    propagate: false
+
+root:
+  level: WARNING
+  handlers: [console]

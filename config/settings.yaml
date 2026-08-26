@@ -1,0 +1,54 @@
+# System Health Monitor — main configuration.
+# Every key overrides a built-in default (utils/config.py:DEFAULT_SETTINGS).
+# Omitted keys fall back to the safe default automatically.
+
+general:
+  interval: 2.0          # seconds between samples
+  workers: 6             # collector thread-pool size
+  top_processes: 5       # hottest processes to report
+
+security:
+  allowed_output_roots: []   # confine report/db writes to these roots when set
+  redact_secrets: true       # scrub secrets from command lines before logging
+
+logging:
+  level: INFO            # DEBUG | INFO | WARNING | ERROR | CRITICAL
+  directory: logs
+  max_bytes: 5242880     # rotate at 5 MiB
+  backup_count: 5
+  console: true
+
+database:
+  path: database/metrics.db
+  retention_days: 30     # prune samples older than this
+
+reporting:
+  directory: reports
+  default_format: json   # json | csv | txt | html | pdf
+
+alerts:
+  channels: [console, log]   # console | log | desktop | webhook
+  webhook_url: ""            # HTTPS only; leave empty to disable
+  cooldown_seconds: 60       # suppress repeat alerts for the same metric
+
+monitors:                # enable/disable individual subsystems
+  cpu: true
+  memory: true
+  disk: true
+  network: true
+  process: true
+  service: true
+  temperature: true
+  battery: true
+  uptime: true
+
+services:
+  # Critical services to watch. Names are OS-specific:
+  #   Windows examples: Dhcp, Dnscache, W32Time
+  #   Linux examples:   sshd, nginx, docker
+  watch: []
+
+filesystem:
+  # Important directories to watch for create/modify/delete/move events.
+  watch: []            # e.g. ["C:/important", "/etc"]
+  recursive: true

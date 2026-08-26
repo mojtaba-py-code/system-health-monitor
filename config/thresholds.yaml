@@ -1,0 +1,29 @@
+# Warning/critical thresholds per subsystem.
+# For most metrics higher is worse (default). For "free" resources such as
+# free disk space or battery percentage, set higher_is_worse: false so that
+# crossing BELOW the value triggers the alert.
+
+cpu:
+  usage_percent:   { warning: 80,  critical: 95 }
+  load_per_core:   { warning: 1.5, critical: 2.5 }
+
+memory:
+  usage_percent:   { warning: 80,  critical: 92 }
+  swap_percent:    { warning: 50,  critical: 80 }
+
+disk:
+  usage_percent:   { warning: 80,  critical: 92 }
+  free_percent:    { warning: 20,  critical: 8,  higher_is_worse: false }
+
+network:
+  throughput_mbps: { warning: 500, critical: 900 }
+
+temperature:
+  celsius:         { warning: 75,  critical: 90 }
+
+battery:
+  percent:         { warning: 20,  critical: 10, higher_is_worse: false }
+
+process:
+  cpu_percent:     { warning: 70,  critical: 90 }
+  memory_percent:  { warning: 20,  critical: 40 }

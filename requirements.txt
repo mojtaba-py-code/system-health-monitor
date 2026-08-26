@@ -1,0 +1,7 @@
+# Runtime dependencies
+psutil>=5.9.0      # system metrics collection
+PyYAML>=6.0.1      # configuration files
+rich>=13.7.0       # live dashboard & pretty output
+colorama>=0.4.6    # coloured console logging (Windows)
+watchdog>=4.0.0    # real-time filesystem monitoring
+requests>=2.31.0   # webhook alert delivery
