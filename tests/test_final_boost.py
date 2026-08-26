@@ -28,7 +28,9 @@ def test_memory_swap_with_faked_backend(monkeypatch: pytest.MonkeyPatch) -> None
 
 def test_cpu_with_faked_loadavg_and_freq(monkeypatch: pytest.MonkeyPatch) -> None:
     Freq = namedtuple("scpufreq", ["current", "min", "max"])
-    monkeypatch.setattr(psutil, "cpu_freq", lambda: Freq(2400.0, 800.0, 3200.0))
+    # macOS does not expose psutil.cpu_freq at all, so this has to install
+    # the attribute rather than replace it.
+    monkeypatch.setattr(psutil, "cpu_freq", lambda: Freq(2400.0, 800.0, 3200.0), raising=False)
     monkeypatch.setattr(os, "getloadavg", lambda: (1.0, 0.5, 0.2), raising=False)
     result = CpuMonitor({"load_per_core": {"warning": 1.5, "critical": 2.5}}).collect()
     assert result.get("frequency_mhz") is not None

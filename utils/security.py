@@ -39,11 +39,14 @@ _SECRET_PATTERNS = re.compile(
 
 def resolve_path(path: str | os.PathLike[str], *, strict: bool = False) -> Path:
     """Resolve *path* to an absolute path, collapsing ``..`` segments."""
+    # Rejected explicitly rather than left to the platform: a NUL byte raises
+    # ValueError on POSIX and OSError on Windows up to 3.12, but Windows 3.13
+    # resolves such a path without complaint, which would let it through
+    # validation and fail later at the point of writing.
+    if chr(0) in os.fspath(path):
+        raise SecurityError(f"Invalid path {path!r}: embedded NUL byte")
     try:
         return Path(path).expanduser().resolve(strict=strict)
-    # A NUL byte in a path raises OSError on Windows but ValueError on POSIX,
-    # so both have to be caught for the SecurityError contract to hold on every
-    # platform - otherwise a caller handling SecurityError still crashes.
     except (OSError, RuntimeError, ValueError) as exc:
         raise SecurityError(f"Invalid path {path!r}: {exc}") from exc
 
