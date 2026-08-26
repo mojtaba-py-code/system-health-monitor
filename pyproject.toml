@@ -1,0 +1,46 @@
+# Tooling configuration for the System Health Monitor.
+#
+# The project is deliberately dependency-light and runs as a script rather than
+# an installed package, so this file configures the tooling only - there is no
+# build backend and nothing is published to an index.
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+src = ["core", "utils", "database", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "I",    # import sorting
+    "N",    # PEP 8 naming
+    "UP",   # pyupgrade
+    "B",    # bugbear
+    "A",    # shadowed builtins
+    "BLE",  # blind except
+    "C4",   # comprehensions
+    "SIM",  # simplifications
+    "S",    # bandit security rules
+    "RUF",  # ruff-specific
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests assert, spawn short-lived fixtures and exercise failure paths on
+# purpose; the security rules that police those patterns are noise here.
+"tests/*" = ["S101", "S105", "S106", "S110", "S311"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["core", "utils", "database"]
+
+[tool.bandit]
+# The test suite deliberately feeds weak and hostile inputs to the validators
+# and asserts that they are rejected, so scanning it reports the fixtures
+# rather than real findings.
+exclude_dirs = ["tests"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-ra -q"
+filterwarnings = ["ignore::DeprecationWarning"]
