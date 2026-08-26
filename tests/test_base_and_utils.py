@@ -128,6 +128,19 @@ def test_validate_output_path_rejects_outside_root(tmp_path: Path) -> None:
         validate_output_path(tmp_path / "elsewhere" / "r.json", allowed_roots=[allowed])
 
 
+def test_validate_output_path_rejects_nul_byte(tmp_path: Path) -> None:
+    """A NUL byte must fail as SecurityError on every platform.
+
+    Windows surfaces this as OSError and POSIX as ValueError; catching only one
+    means a caller that handles SecurityError still crashes on the other.
+    """
+    bad = f"{tmp_path}/rep{chr(0)}ort.json"
+    with pytest.raises(SecurityError):
+        validate_output_path(bad)
+    with pytest.raises(SecurityError):
+        validate_output_path(bad, allowed_roots=[tmp_path])
+
+
 def test_safe_run_refuses_unlisted_command() -> None:
     with pytest.raises(SecurityError):
         safe_run(["rm", "-rf", "/"])

@@ -41,7 +41,10 @@ def resolve_path(path: str | os.PathLike[str], *, strict: bool = False) -> Path:
     """Resolve *path* to an absolute path, collapsing ``..`` segments."""
     try:
         return Path(path).expanduser().resolve(strict=strict)
-    except (OSError, RuntimeError) as exc:
+    # A NUL byte in a path raises OSError on Windows but ValueError on POSIX,
+    # so both have to be caught for the SecurityError contract to hold on every
+    # platform - otherwise a caller handling SecurityError still crashes.
+    except (OSError, RuntimeError, ValueError) as exc:
         raise SecurityError(f"Invalid path {path!r}: {exc}") from exc
 
 
@@ -49,7 +52,8 @@ def is_within(child: Path, parent: Path) -> bool:
     try:
         child.resolve().relative_to(parent.resolve())
         return True
-    except ValueError:
+    # Fail closed: an unresolvable path is not inside the allowed root.
+    except (ValueError, OSError, RuntimeError):
         return False
 
 
