@@ -4,4 +4,4 @@ PyYAML>=6.0.3      # configuration files
 rich>=15.0.0       # live dashboard & pretty output
 colorama>=0.4.6    # coloured console logging (Windows)
 watchdog>=6.0.0    # real-time filesystem monitoring
-requests>=2.31.0   # webhook alert delivery
+requests>=2.34.2   # webhook alert delivery
