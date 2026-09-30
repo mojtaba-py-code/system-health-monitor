@@ -10,7 +10,7 @@ on:
   # A CVE can land against a pinned dependency long after the last commit, so
   # the audit runs weekly whether or not anything changed.
   schedule:
-    - cron: "0 6 * * 1"
+    - cron: "13 6 * * 1"
 
 concurrency:
   group: ci-${{ github.ref }}
